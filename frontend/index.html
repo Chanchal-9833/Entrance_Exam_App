@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="center">
+
+<div class="card">
+
+  <!-- TOGGLE -->
+  <div class="toggle-container">
+    <span id="studentLabel" class="active">Student</span>
+    <label class="switch">
+      <input type="checkbox" id="toggle" onchange="switchMode()">
+      <span class="slider"></span>
+    </label>
+    <span id="adminLabel">Admin</span>
+  </div>
+
+  <h2 id="title">Student Login</h2>
+
+  <!-- STUDENT LOGIN -->
+  <div id="studentLogin">
+    <input id="email" placeholder="Enter Email">
+    <button onclick="studentLogin()">Start Exam</button>
+    <p>New user? <a href="register.html">Register</a></p>
+  </div>
+
+  <!-- ADMIN LOGIN -->
+  <div id="adminLogin" style="display:none;">
+    <input id="adminUser" placeholder="Username">
+   <div class="password-container">
+  <input id="adminPass" type="password" placeholder="Password">
+  <span  onclick="togglePassword()" id="eye">👁️</span>
+</div>
+    <button onclick="adminLogin()">Login as Admin</button>
+  </div>
+
+</div>
+
+<script>
+
+function switchMode() {
+  let toggle = document.getElementById("toggle").checked;
+
+  if(toggle) {
+    document.getElementById("studentLogin").style.display = "none";
+    document.getElementById("adminLogin").style.display = "block";
+    document.getElementById("title").innerText = "Admin Login";
+
+    document.getElementById("studentLabel").classList.remove("active");
+    document.getElementById("adminLabel").classList.add("active");
+
+  } else {
+    document.getElementById("studentLogin").style.display = "block";
+    document.getElementById("adminLogin").style.display = "none";
+    document.getElementById("title").innerText = "Student Login";
+
+    document.getElementById("adminLabel").classList.remove("active");
+    document.getElementById("studentLabel").classList.add("active");
+  }
+}
+
+// STUDENT LOGIN
+async function studentLogin(){
+  let emailVal = document.getElementById("email").value;
+
+  let res = await fetch("http://localhost:3000/auth/check", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ email: emailVal })
+  });
+
+  let data = await res.json();
+
+  if(data.verified){
+    localStorage.setItem("email", emailVal);
+    window.location.href="exam.html";
+  } else {
+    alert("Please verify your email first");
+  }
+}
+
+// ADMIN LOGIN (simple check)
+function adminLogin(){
+  let user = document.getElementById("adminUser").value;
+  let pass = document.getElementById("adminPass").value;
+
+  if(user === "admin" && pass === "1234"){
+    window.location.href = "admin.html";
+  } else {
+    alert("Invalid Admin Credentials");
+  }
+}
+function togglePassword() {
+  let passField = document.getElementById("adminPass");
+  let eye = document.getElementById("eye");
+
+  if (passField.type === "password") {
+    passField.type = "text";
+    eye.innerText = "🙈"; // hide icon
+  } else {
+    passField.type = "password";
+    eye.innerText = "👁️"; // show icon
+  }
+}
+</script>
+
+</body>
+</html>

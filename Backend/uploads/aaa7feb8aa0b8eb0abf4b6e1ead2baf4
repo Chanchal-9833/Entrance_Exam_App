@@ -1,0 +1,14 @@
+[
+  {
+    "question": "What is 2+2?",
+    "options": ["1", "2", "3", "4"],
+    "correctAnswer": "4",
+    "subject": "Mathematics"
+  },
+  {
+    "question": "Speed of light?",
+    "options": ["3x10^8", "5x10^8", "1x10^8", "9x10^8"],
+    "correctAnswer": "3x10^8",
+    "subject": "Physics"
+  }
+]

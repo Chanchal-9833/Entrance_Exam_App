@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="center">
+
+<div class="card">
+  <h2>Register</h2>
+
+  <input id="name" placeholder="Name">
+  <input id="age" placeholder="Age">
+  <input id="education" placeholder="Education">
+  <input id="college" placeholder="College">
+  <input id="email" placeholder="Email">
+
+  <button onclick="register()">Register</button>
+
+  <h3>OTP</h3>
+  <input id="otp">
+  <button onclick="verify()">Verify</button>
+</div>
+
+<script>
+async function register(){
+  let btn = event.target;
+
+  btn.disabled = true;
+  btn.innerText = "Sending OTP...";
+
+  await fetch("http://localhost:3000/auth/register",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      name: document.getElementById("name").value,
+      age: document.getElementById("age").value,
+      education: document.getElementById("education").value,
+      college: document.getElementById("college").value,
+      email: document.getElementById("email").value
+    })
+  });
+
+  alert("OTP Sent");
+  btn.innerText = "OTP Sent ✔";
+}
+
+async function verify(){
+ let res=await fetch("http://localhost:3000/auth/verify",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+     email:email.value,
+     otp:otp.value
+   })
+ });
+
+ let data=await res.json();
+ alert(data.message);
+
+ if(data.message==="Verified"){
+   localStorage.setItem("email",email.value);
+   window.location.href="exam.html";
+ }
+}
+</script>
+
+</body>
+</html>

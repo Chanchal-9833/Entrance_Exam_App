@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Result</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="center">
+
+<div class="card">
+  <h2>Result</h2>
+  <h3 id="score"></h3>
+</div>
+
+<script>
+let r=JSON.parse(localStorage.getItem("result"));
+document.getElementById("score").innerText =
+"Score: "+r.score+" / "+r.total;
+</script>
+
+</body>
+</html>

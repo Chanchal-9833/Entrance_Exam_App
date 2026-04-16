@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Online Exam</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div>👤 <span id="user"></span></div>
+  <div id="timer"></div>
+</div>
+
+<div class="container">
+
+  <!-- LEFT -->
+  <div class="question-section">
+    <div id="questionBox"></div>
+
+    <div class="controls">
+      <button onclick="prev()">Prev</button>
+      <button onclick="markReview()">Mark</button>
+      <button onclick="next()">Next</button>
+      <button class="submit" onclick="submitExam()">Submit</button>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="palette-section">
+    <h3>Question Palette</h3>
+    <div id="palette" class="palette"></div>
+
+    <div class="legend">
+      <p><span class="box gray"></span> Not Visited</p>
+      <p><span class="box red"></span> Not Answered</p>
+      <p><span class="box green"></span> Answered</p>
+      <p><span class="box purple"></span> Marked</p>
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+[
+  {
+    "question": "What is 2 + 2?",
+    "options": ["1", "2", "3", "4"],
+    "correctAnswer": "4",
+    "subject": "Mathematics"
+  },
+  {
+    "question": "What is the value of π (pi)?",
+    "options": ["2.14", "3.14", "4.13", "3.41"],
+    "correctAnswer": "3.14",
+    "subject": "Mathematics"
+  },
+  {
+    "question": "Speed of light is approximately?",
+    "options": ["3 × 10^8 m/s", "5 × 10^6 m/s", "1 × 10^7 m/s", "9 × 10^9 m/s"],
+    "correctAnswer": "3 × 10^8 m/s",
+    "subject": "Physics"
+  },
+  {
+    "question": "Which gas is most abundant in Earth's atmosphere?",
+    "options": ["Oxygen", "Hydrogen", "Nitrogen", "Carbon Dioxide"],
+    "correctAnswer": "Nitrogen",
+    "subject": "Chemistry"
+  },
+  {
+    "question": "Which element has atomic number 1?",
+    "options": ["Helium", "Hydrogen", "Oxygen", "Carbon"],
+    "correctAnswer": "Hydrogen",
+    "subject": "Chemistry"
+  }
+]
