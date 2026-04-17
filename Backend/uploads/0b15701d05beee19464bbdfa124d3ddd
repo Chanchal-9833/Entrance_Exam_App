@@ -1,0 +1,32 @@
+[
+  {
+    "question": "What is the value of 12 × 8?",
+    "options": ["96", "88", "108", "112"],
+    "correctAnswer": "96",
+    "subject": "Mathematics"
+  },
+  {
+    "question": "What is the square root of 144?",
+    "options": ["10", "11", "12", "13"],
+    "correctAnswer": "12",
+    "subject": "Mathematics"
+  },
+  {
+    "question": "Solve: 25 + 37 = ?",
+    "options": ["52", "62", "72", "82"],
+    "correctAnswer": "62",
+    "subject": "Mathematics"
+  },
+  {
+    "question": "What is 15% of 200?",
+    "options": ["20", "25", "30", "35"],
+    "correctAnswer": "30",
+    "subject": "Mathematics"
+  },
+  {
+    "question": "Simplify: 50 ÷ 5 × 2",
+    "options": ["10", "20", "30", "40"],
+    "correctAnswer": "20",
+    "subject": "Mathematics"
+  }
+]

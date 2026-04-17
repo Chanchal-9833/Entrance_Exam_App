@@ -32,7 +32,7 @@
     <input id="adminUser" placeholder="Username">
    <div class="password-container">
   <input id="adminPass" type="password" placeholder="Password">
-  <span  onclick="togglePassword()" id="eye">👁️</span>
+    
 </div>
     <button onclick="adminLogin()">Login as Admin</button>
   </div>
@@ -76,7 +76,7 @@ async function studentLogin(){
 
   if(data.verified){
     localStorage.setItem("email", emailVal);
-    window.location.href="exam.html";
+    window.location.href="select-paper.html";
   } else {
     alert("Please verify your email first");
   }

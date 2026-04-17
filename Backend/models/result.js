@@ -6,6 +6,7 @@ const resultSchema = new mongoose.Schema({
   college: String,
   score: Number,
   total: Number,
+  paperId: String,
   date: { type: Date, default: Date.now }
 });
 

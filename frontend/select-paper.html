@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Select Exam Paper</title>
+  <style>
+    body{
+      font-family: Arial;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      background:#f5f6fa;
+    }
+
+    .box{
+      background:white;
+      padding:30px;
+      border-radius:10px;
+      box-shadow:0 5px 20px rgba(0,0,0,0.1);
+      text-align:center;
+      width:300px;
+    }
+
+    select, button{
+      width:100%;
+      padding:10px;
+      margin-top:10px;
+    }
+
+    button{
+      background:#2d7ef7;
+      color:white;
+      border:none;
+      cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>Select Exam Paper</h2>
+
+  <select id="paperList">
+    <option>Loading...</option>
+  </select>
+
+  <button onclick="startExam()">Start Exam</button>
+</div>
+
+<script>
+async function loadPapers(){
+  let res = await fetch("http://localhost:3000/exam/papers");
+  let data = await res.json();
+
+  let select = document.getElementById("paperList");
+  select.innerHTML = "";
+
+  data.forEach(p => {
+    let option = document.createElement("option");
+    option.value = p;
+    option.innerText = p;
+    select.appendChild(option);
+  });
+}
+
+function startExam(){
+  let paperId = document.getElementById("paperList").value;
+
+  localStorage.setItem("paperId", paperId);
+
+  window.location.href = "exam.html";
+}
+
+loadPapers();
+</script>
+
+</body>
+</html>

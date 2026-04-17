@@ -88,10 +88,11 @@ async function submitExam(){
     let res = await fetch("http://localhost:3000/exam/submit",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        email:localStorage.getItem("email"),
-        answers:answers
-      })
+      body: JSON.stringify({
+  email: localStorage.getItem("email"),
+  paperId: localStorage.getItem("paperId"),
+  answers: answers
+})
     });
 
     let data = await res.json();
@@ -157,20 +158,15 @@ setInterval(() => {
   if(time <= 0) submitExam();
 }, 1000);
 
-async function loadQuestions() {
-  let saved = localStorage.getItem("questions");
+async function loadQuestions(){
+  let paperId = localStorage.getItem("paperId");
 
-  if(saved){
-    questions = JSON.parse(saved);
-  } else {
-    let res = await fetch("http://localhost:3000/exam/questions");
-    let data = await res.json();
+  let res = await fetch(`http://localhost:3000/exam/questions/${paperId}`);
+  let data = await res.json();
 
-    shuffleArray(data);
+  shuffleArray(data); // optional
 
-    questions = data;
-    localStorage.setItem("questions", JSON.stringify(questions));
-  }
+  questions = data;
 
   buildPalette();
   showQuestion();

@@ -151,6 +151,64 @@
     }
     .upload-box:hover { border-color: var(--primary); background: #f5f3ff; }
 
+    /* Paper Filter Dropdown Container */
+.paper-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 1rem 0;
+}
+
+/* Label (optional) */
+.paper-filter label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Dropdown Styling */
+.paper-filter select {
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  min-width: 220px;
+
+  /* remove default arrow styling (for modern look) */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* custom arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 2.5rem;
+}
+
+/* Hover effect */
+.paper-filter select:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* Focus effect */
+.paper-filter select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+/* Disabled option style */
+.paper-filter select option {
+  padding: 10px;
+}
+
     /* TABLE */
     table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
     th { text-align: left; padding: 1rem; background: #f8fafc; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; border-bottom: 1px solid var(--border); }
@@ -191,6 +249,7 @@
           <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
           Click to select or drag and drop JSON
         </label>
+        <input id="paperId" placeholder="Enter Paper ID (JEE-MATH-2026)">
 
         <button class="btn-primary" onclick="upload()">Upload to Server</button>
         <p id="uploadMsg"></p>
@@ -201,12 +260,17 @@
         <div style="display: flex; gap: 10px; margin-top: 1rem;">
           <input id="duration" type="number" placeholder="Duration (minutes)" style="margin-bottom: 0; max-width: 200px;">
           <button class="btn-primary" onclick="setDuration()">Set Time</button>
+
+          
         </div>
       </div>
 
       <div id="manualSection" class="card" style="display:none;">
+         <input id="paperIdManual" placeholder="Paper ID (JEE-MATH-2026)">
         <h3>Create New Question</h3>
         <input id="q" placeholder="Enter Question Statement">
+        
+        
 
         <div class="grid-2">
           <input id="o1" placeholder="Option 1">
@@ -230,6 +294,12 @@
         <div style="padding: 1.5rem; border-bottom: 1px solid var(--border);">
           <h3>Performance Records</h3>
         </div>
+       <div class="paper-filter">
+  <label>Filter Paper:</label>
+  <select id="paperFilter" onchange="loadResultsByPaper()">
+    <option value="">All Papers</option>
+  </select>
+</div>
         <div style="overflow-x: auto;">
           <table>
             <thead>
@@ -238,6 +308,7 @@
                 <th>Email</th>
                 <th>College</th>
                 <th>Score</th>
+                <th>Paper ID</th>
                 <th>Date</th>
               </tr>
             </thead>
@@ -288,26 +359,54 @@
   }
 
   // API CALLS (Kept your logic, just cleaned up UI feedback)
-  async function upload(){
-    const fileInput = document.getElementById("file");
-    if(!fileInput.files[0]) return alert("Please select a file first");
-    
-    let formData = new FormData();
-    formData.append("file", fileInput.files[0]);
+ async function upload(){
+  const fileInput = document.getElementById("file");
+  const paperInput = document.getElementById("paperId");
+  const msg = document.getElementById("uploadMsg");
 
-    const msg = document.getElementById("uploadMsg");
-    msg.innerText = "Uploading...";
-    
-    try {
-      let res = await fetch("http://localhost:3000/admin/upload-json", { method: "POST", body: formData });
-      let data = await res.json();
+  if(!fileInput.files[0]){
+    return alert("Please select a file first");
+  }
+
+  if(!paperInput.value){
+    return alert("Please enter Paper ID");
+  }
+
+  let formData = new FormData();
+  formData.append("file", fileInput.files[0]);
+
+  // 🔥 IMPORTANT: Paper ID from UI
+  formData.append("paperId", paperInput.value);
+
+  msg.innerText = "Uploading...";
+  msg.style.color = "black";
+
+  try {
+    let res = await fetch("http://localhost:3000/admin/upload-json", {
+      method: "POST",
+      body: formData
+    });
+
+    let data = await res.json();
+
+    if(res.ok){
       msg.innerText = data.message || "Upload successful";
       msg.style.color = "green";
-    } catch (e) {
-      msg.innerText = "Error uploading file.";
+
+      // optional reset
+      fileInput.value = "";
+      paperInput.value = "";
+    } else {
+      msg.innerText = data.message || "Upload failed";
       msg.style.color = "red";
     }
+
+  } catch (e) {
+    console.error(e);
+    msg.innerText = "Server error while uploading.";
+    msg.style.color = "red";
   }
+}
 
   async function setDuration(){
     let dur = parseInt(document.getElementById("duration").value);
@@ -322,28 +421,35 @@
     alert("Timer updated to " + dur + " mins");
   }
 
-  async function add(){
-    const btn = event.target;
-    btn.innerText = "Adding...";
-    await fetch("http://localhost:3000/admin/add-question",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        question: document.getElementById("q").value,
-        options:[
-          document.getElementById("o1").value,
-          document.getElementById("o2").value,
-          document.getElementById("o3").value,
-          document.getElementById("o4").value
-        ],
-        correctAnswer: document.getElementById("ans").value,
-        subject: document.getElementById("sub").value
-      })
-    });
-    btn.innerText = "Add to Database";
-    document.getElementById("addMsg").innerText="Question added successfully!";
-    setTimeout(() => document.getElementById("addMsg").innerText="", 3000);
-  }
+ async function add(){
+  const btn = event.target;
+  btn.innerText = "Adding...";
+
+  let res = await fetch("http://localhost:3000/admin/add-question",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      paperId: document.getElementById("paperIdManual").value, 
+      question: document.getElementById("q").value,
+      options: [
+        document.getElementById("o1").value,
+        document.getElementById("o2").value,
+        document.getElementById("o3").value,
+        document.getElementById("o4").value
+      ],
+      correctAnswer: document.getElementById("ans").value,
+      subject: document.getElementById("sub").value
+    })
+  });
+
+  btn.innerText = "Add Question";
+
+  document.getElementById("addMsg").innerText = "Question added successfully!";
+
+  setTimeout(() => {
+    document.getElementById("addMsg").innerText = "";
+  }, 2000);
+}
 
   async function loadResults(){
     const table = document.getElementById("resultTable");
@@ -360,7 +466,8 @@
           <td style="color:var(--text-muted)">${r.email}</td>
           <td>${r.college}</td>
           <td><span style="background:#dcfce7; color:#166534; padding:4px 8px; border-radius:6px; font-weight:600">${r.score} / ${r.total}</span></td>
-          <td style="font-size:0.8rem">${new Date(r.date).toLocaleDateString()}</td>
+           <td>${r.paperId || "N/A"}</td>
+           <td style="font-size:0.8rem">${new Date(r.date).toLocaleDateString()}</td>
         </tr>`;
       });
       table.innerHTML = html;
@@ -368,7 +475,29 @@
       table.innerHTML = "<tr><td colspan='5'>Failed to load data.</td></tr>";
     }
   }
+  async function loadPapers(){
+  let res = await fetch("http://localhost:3000/exam/papers");
+  let data = await res.json();
 
+  let select = document.getElementById("paperFilter");
+
+  data.forEach(p => {
+    select.innerHTML += `<option value="${p}">${p}</option>`;
+  });
+}
+
+async function loadResultsByPaper(){
+  let paperId = document.getElementById("paperFilter").value;
+
+  let url = paperId 
+    ? `http://localhost:3000/admin/results/${paperId}`
+    : `http://localhost:3000/admin/results`;
+
+  let res = await fetch(url);
+  let data = await res.json();
+
+  // reuse same rendering logic
+}
   function logout(){
     localStorage.clear();
     window.location.href="index.html";
