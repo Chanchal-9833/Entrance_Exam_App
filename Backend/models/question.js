@@ -5,7 +5,9 @@ const questionSchema = new mongoose.Schema({
   options: [String],
   correctAnswer: String,
   subject: String,
-   paperId: String 
+   paperId: String,
+    section: String
+
 });
 
 module.exports = mongoose.model("Question", questionSchema);

@@ -7,6 +7,7 @@ const resultSchema = new mongoose.Schema({
   score: Number,
   total: Number,
   paperId: String,
+    sectionScores: Object,
   date: { type: Date, default: Date.now }
 });
 

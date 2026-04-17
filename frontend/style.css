@@ -161,11 +161,7 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
-/* ACTIVE LABEL */
-.active {
-  font-weight:bold;
-  color:#3498db;
-}
+
 
 .password-container {
   position: relative;
@@ -339,4 +335,147 @@ td, th {
 .label-prefix {
   margin-right: 5px;
   color: #64748b;
+}
+
+
+/* ================= MOBILE RESPONSIVENESS ================= */
+@media (max-width: 768px) {
+
+  /* MAIN LAYOUT STACK */
+  .container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .question-section,
+  .palette-section {
+    width: 100%;
+  }
+
+  /* TOPBAR STACK */
+  .topbar {
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+  }
+
+  /* CONTROLS BUTTONS */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .controls button {
+    flex: 1 1 45%;
+    margin: 5px;
+  }
+
+  /* PALETTE GRID SMALLER */
+  .palette {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* INPUT FULL WIDTH */
+  input {
+    width: 100%;
+  }
+
+  /* CARD FULL WIDTH */
+  .card {
+    width: 90%;
+  }
+
+  /* ADMIN LAYOUT STACK */
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  /* SIDEBAR TOP NAV STYLE */
+  .sidebar {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .sidebar button {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  /* MAIN CONTENT */
+  .main-content {
+    padding: 10px;
+  }
+
+  /* GRID -> SINGLE COLUMN */
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* TABLE SCROLL */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* PASSWORD FIELD */
+  .password-container {
+    width: 100%;
+  }
+
+  /* OPTION TEXT WRAP */
+  .option-text {
+    font-size: 0.95rem;
+  }
+
+}
+
+
+/* ================= EXTRA SMALL DEVICES ================= */
+@media (max-width: 480px) {
+
+  /* BUTTONS FULL WIDTH */
+  .controls button {
+    flex: 1 1 100%;
+  }
+
+  /* PALETTE EVEN SMALLER */
+  .palette {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* FONT REDUCE */
+  body {
+    font-size: 14px;
+  }
+
+  .topbar {
+    font-size: 14px;
+  }
+
+}
+
+.section-tabs {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.section-tabs button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.section-tabs button.active {
+  background: #3498db;
+  color: white;
 }

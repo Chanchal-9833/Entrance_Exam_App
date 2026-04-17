@@ -28,7 +28,6 @@ router.get("/questions/:paperId", async (req, res) => {
 });
 
 // Submit Exam
-
 router.post("/submit", async (req, res) => {
   const { email, answers, paperId } = req.body;
 
@@ -42,32 +41,53 @@ router.post("/submit", async (req, res) => {
     return res.status(403).send({ message: "User not verified" });
   }
 
-  // 🔥 ONLY THIS PAPER
+  // ✅ ONLY THIS PAPER
   const questions = await Question.find({ paperId });
 
   let score = 0;
 
+  // 🔥 SECTION-WISE TRACKING
+  let sectionScores = {};   // { A: {score, total}, B: {...} }
+
+  questions.forEach(q => {
+    if (!sectionScores[q.section]) {
+      sectionScores[q.section] = { score: 0, total: 0 };
+    }
+    sectionScores[q.section].total++;
+  });
+
+  // 🔥 CHECK ANSWERS
   answers.forEach(a => {
     const q = questions.find(q => q._id.toString() === a.questionId);
 
-    if (q && a.answer === q.correctAnswer) {
-      score++;
+    if (q) {
+      if (a.answer === q.correctAnswer) {
+        score++;
+        sectionScores[q.section].score++;
+      }
     }
   });
 
+  // SAVE RESULT
   const result = new Result({
     name: student.name,
     email: student.email,
     college: student.college,
     score,
     total: questions.length,
-    paperId // ✅ FIXED
+    paperId,
+    sectionScores   // 🔥 SAVE
   });
 
   await result.save();
 
+  // 📧 EMAIL
   try {
-    console.log("📧 Sending email to:", student.email);
+    let sectionText = "";
+
+    for (let sec in sectionScores) {
+      sectionText += `Section ${sec}: ${sectionScores[sec].score}/${sectionScores[sec].total}\n`;
+    }
 
     await transporter.sendMail({
       from: "YOUR_EMAIL@gmail.com",
@@ -75,21 +95,27 @@ router.post("/submit", async (req, res) => {
       subject: "Your Exam Result",
       text: `Dear ${student.name},
 
-Your exam (${paperId}) has been successfully completed.
-Here are your results:
-Score: ${score} out of ${questions.length}
+Your exam (${paperId}) has been completed.
+
+Total Score: ${score}/${questions.length}
+
+Section-wise Performance:
+${sectionText}
 
 Thank you,
 Exam Team`
     });
 
-    console.log("✅ Email sent successfully");
-
   } catch (err) {
     console.error("❌ Email error:", err);
   }
 
-  res.send({ score, total: questions.length });
+  // 🔥 SEND TO FRONTEND
+  res.send({
+    score,
+    total: questions.length,
+    sectionScores
+  });
 });
 
 const Config = require("../models/config");

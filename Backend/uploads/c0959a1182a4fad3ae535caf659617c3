@@ -1,0 +1,72 @@
+[
+  {
+    "question": "Choose the correct synonym of 'Happy'",
+    "options": ["Sad", "Joyful", "Angry", "Tired"],
+    "correctAnswer": "Joyful",
+    "subject": "English",
+    "section": "A"
+  },
+  {
+    "question": "Choose the correct antonym of 'Fast'",
+    "options": ["Quick", "Rapid", "Slow", "Speedy"],
+    "correctAnswer": "Slow",
+    "subject": "English",
+    "section": "A"
+  },
+  {
+    "question": "Fill in the blank: She ___ going to school.",
+    "options": ["is", "are", "am", "be"],
+    "correctAnswer": "is",
+    "subject": "English",
+    "section": "A"
+  },
+  {
+    "question": "Identify the noun: 'The cat is sleeping.'",
+    "options": ["cat", "sleeping", "is", "the"],
+    "correctAnswer": "cat",
+    "subject": "English",
+    "section": "A"
+  },
+  {
+    "question": "Choose correct spelling",
+    "options": ["Recieve", "Receive", "Receeve", "Recive"],
+    "correctAnswer": "Receive",
+    "subject": "English",
+    "section": "A"
+  },
+  {
+    "question": "Choose the correct tense: He ___ to market yesterday.",
+    "options": ["go", "went", "gone", "going"],
+    "correctAnswer": "went",
+    "subject": "English",
+    "section": "A"
+  },
+  {
+    "question": "Identify adjective: 'She is a beautiful girl.'",
+    "options": ["She", "is", "beautiful", "girl"],
+    "correctAnswer": "beautiful",
+    "subject": "English",
+    "section": "A"
+  },
+  {
+    "question": "Choose correct article: ___ apple",
+    "options": ["a", "an", "the", "none"],
+    "correctAnswer": "an",
+    "subject": "English",
+    "section": "A"
+  },
+  {
+    "question": "Choose synonym of 'Big'",
+    "options": ["Small", "Tiny", "Large", "Short"],
+    "correctAnswer": "Large",
+    "subject": "English",
+    "section": "A"
+  },
+  {
+    "question": "Choose antonym of 'Hot'",
+    "options": ["Warm", "Cold", "Heat", "Fire"],
+    "correctAnswer": "Cold",
+    "subject": "English",
+    "section": "A"
+  }
+]

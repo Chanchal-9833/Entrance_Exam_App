@@ -2,7 +2,8 @@ let questions=[];
 let current=0;
 let answers=JSON.parse(localStorage.getItem("answers"))||[];
 let review=[];
-
+let currentSection = "A";
+let sectionMap = {}; // { A: [0,1,2], B: [3,4] }
 document.getElementById("user").innerText =
 localStorage.getItem("email");
 
@@ -10,7 +11,25 @@ localStorage.getItem("email");
 
 function showQuestion(){
   let q = questions[current];
-  let html = `<h3>Q${current+1}: ${q.question}</h3>`;
+   if(currentSection !== q.section){
+    currentSection = q.section;
+
+    // update tab UI
+    document.querySelectorAll(".section-tabs button")
+      .forEach(btn => btn.classList.remove("active"));
+
+    let tab = document.getElementById("tab-" + q.section);
+    if(tab) tab.classList.add("active");
+
+    buildPalette(); // rebuild palette for new section
+  }
+  let sectionQNo = getSectionQuestionNumber(current);
+ let html = `
+  <h4 style="color:#666;">
+    Section ${q.section} - ${q.subject}
+  </h4>
+  <h3>Q${sectionQNo}: ${q.question}</h3>
+`;
   let labels = ["A", "B", "C", "D"];
 
   q.options.forEach((opt, index) => {
@@ -51,37 +70,49 @@ function prev(){ if(current>0) current--; showQuestion();}
 
 function markReview(){ review[current]=true; updatePalette();}
 
-function buildPalette(){
- let p="";
- for(let i=0;i<questions.length;i++){
-   p+=`<button onclick="goto(${i})" id="p${i}">${i+1}</button>`;
- }
- document.getElementById("palette").innerHTML=p;
+function goto(i){
+  current = i;
+  showQuestion();
 }
+function buildPalette(){
+  let p = "";
+  let indices = sectionMap[currentSection] || [];
 
-function goto(i){ current=i; showQuestion(); }
+  indices.forEach((i, idx) => {
+    p += `<button onclick="goto(${i})" id="p${i}">
+            ${idx + 1}
+          </button>`;
+  });
 
+  document.getElementById("palette").innerHTML = p;
+}
 function updatePalette() {
-  for (let i = 0; i < questions.length; i++) {
+  let indices = sectionMap[currentSection] || [];
+
+  indices.forEach(i => {
     let btn = document.getElementById("p" + i);
-    
-    // Reset classes but keep basic button
-    btn.className = ""; 
-    
-    // Check Status
+    if (!btn) return;
+
+    // 🔥 RESET EVERYTHING
+    btn.className = "";
+
     if (review[i]) {
       btn.classList.add("purple");
-    } else if (answers[i]) {
+    } 
+    else if (answers[i]) {
       btn.classList.add("green");
-    } else {
+    } 
+    else {
       btn.classList.add("red");
     }
+  });
+}
+function getSectionQuestionNumber(index) {
+  let section = questions[index].section;
 
-    // Highlight CURRENT question
-    if (i === current) {
-      btn.classList.add("active");
-    }
-  }
+  let indices = sectionMap[section];
+
+  return indices.indexOf(index) + 1; // position inside section
 }
 async function submitExam(){
   try {
@@ -164,14 +195,57 @@ async function loadQuestions(){
   let res = await fetch(`http://localhost:3000/exam/questions/${paperId}`);
   let data = await res.json();
 
-  shuffleArray(data); // optional
+  // 🔥 GROUP BY SECTION
+  let grouped = {};
 
-  questions = data;
+  data.forEach(q => {
+    if (!grouped[q.section]) {
+      grouped[q.section] = [];
+    }
+    grouped[q.section].push(q);
+  });
+
+  // 🔥 SHUFFLE EACH SECTION
+  Object.keys(grouped).forEach(sec => {
+    shuffleArray(grouped[sec]);
+  });
+
+  // 🔥 MERGE BACK (A → B → C → D order)
+  questions = [];
+  ["A", "B", "C", "D"].forEach(sec => {
+    if (grouped[sec]) {
+      questions = questions.concat(grouped[sec]);
+    }
+  });
+
+  // 🔥 BUILD SECTION MAP (VERY IMPORTANT)
+  sectionMap = {};
+  questions.forEach((q, index) => {
+    if (!sectionMap[q.section]) {
+      sectionMap[q.section] = [];
+    }
+    sectionMap[q.section].push(index);
+  });
 
   buildPalette();
   showQuestion();
 }
+function showSection(section) {
+  currentSection = section;
 
+  // remove active from tabs
+  document.querySelectorAll(".section-tabs button")
+    .forEach(btn => btn.classList.remove("active"));
+
+  // add active to current tab
+  document.getElementById("tab-" + section).classList.add("active");
+
+  
+  buildPalette();
+
+ 
+  updatePalette();
+}
 async function startExam(){
   await loadDuration();   // ⏱ get duration first
   await loadQuestions();  // 📘 then load questions

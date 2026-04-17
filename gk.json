@@ -1,0 +1,37 @@
+[
+  {
+    "question": "Capital of India?",
+    "options": ["Mumbai", "Delhi", "Chennai", "Kolkata"],
+    "correctAnswer": "Delhi",
+    "subject": "GK",
+    "section": "C"
+  },
+  {
+    "question": "Who is Prime Minister of India (2024)?",
+    "options": ["Rahul Gandhi", "Narendra Modi", "Amit Shah", "Yogi Adityanath"],
+    "correctAnswer": "Narendra Modi",
+    "subject": "GK",
+    "section": "C"
+  },
+  {
+    "question": "Largest planet?",
+    "options": ["Earth", "Mars", "Jupiter", "Venus"],
+    "correctAnswer": "Jupiter",
+    "subject": "GK",
+    "section": "C"
+  },
+  {
+    "question": "National animal of India?",
+    "options": ["Lion", "Tiger", "Elephant", "Leopard"],
+    "correctAnswer": "Tiger",
+    "subject": "GK",
+    "section": "C"
+  },
+  {
+    "question": "Currency of India?",
+    "options": ["Dollar", "Rupee", "Euro", "Yen"],
+    "correctAnswer": "Rupee",
+    "subject": "GK",
+    "section": "C"
+  }
+]

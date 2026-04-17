@@ -12,30 +12,20 @@ const upload = multer({ dest: "uploads/" });
 router.post("/upload-json", upload.single("file"), async (req, res) => {
   const fs = require("fs");
 
-  // Read file
   const data = JSON.parse(fs.readFileSync(req.file.path));
 
-  //  Paper ID from FORM DATA (NOT JSON)
   const paperId = req.body.paperId;
+  const sectionFromUI = req.body.section;
 
-  if (!paperId) {
-    return res.status(400).send({ message: "Paper ID is required" });
-  }
-
-  //  Attach paperId to every question
   const questions = data.map(q => ({
-    question: q.question,
-    options: q.options,
-    correctAnswer: q.correctAnswer,
-    subject: q.subject,
-    paperId: paperId   // injected here
+    ...q,
+    paperId,
+    section: sectionFromUI || q.section   // ✅ KEY LOGIC
   }));
 
   await Question.insertMany(questions);
 
-  res.send({
-    message: `Questions uploaded successfully for paper: ${paperId}`
-  });
+  res.send({ message: "Questions uploaded successfully" });
 });
 
 router.post("/add-question", async (req, res) => {

@@ -250,6 +250,7 @@
           Click to select or drag and drop JSON
         </label>
         <input id="paperId" placeholder="Enter Paper ID (JEE-MATH-2026)">
+        <input id="section" placeholder="Section (A/B/C/D)">
 
         <button class="btn-primary" onclick="upload()">Upload to Server</button>
         <p id="uploadMsg"></p>
@@ -267,6 +268,7 @@
 
       <div id="manualSection" class="card" style="display:none;">
          <input id="paperIdManual" placeholder="Paper ID (JEE-MATH-2026)">
+         <input id="section" placeholder="Section (A/B/C/D)">
         <h3>Create New Question</h3>
         <input id="q" placeholder="Enter Question Statement">
         
@@ -294,11 +296,11 @@
         <div style="padding: 1.5rem; border-bottom: 1px solid var(--border);">
           <h3>Performance Records</h3>
         </div>
-       <div class="paper-filter">
-  <label>Filter Paper:</label>
-  <select id="paperFilter" onchange="loadResultsByPaper()">
-    <option value="">All Papers</option>
-  </select>
+        <div class="paper-filter">
+    <label>Filter Paper:</label>
+    <select id="paperFilter" onchange="loadResultsByPaper()">
+      <option value="">All Papers</option>
+    </select>
 </div>
         <div style="overflow-x: auto;">
           <table>
@@ -350,7 +352,10 @@
     document.getElementById("navRes").classList.add('active');
     document.getElementById("navDash").classList.remove('active');
     loadResults();
-  }
+     loadPaperFilter();   
+  loadResultsByPaper();  
+}
+  
 
   function updateFileName(input) {
     const label = document.getElementById('fileLabel');
@@ -361,25 +366,19 @@
   // API CALLS (Kept your logic, just cleaned up UI feedback)
  async function upload(){
   const fileInput = document.getElementById("file");
-  const paperInput = document.getElementById("paperId");
+  const paperId = document.getElementById("paperId").value;
+  const section = document.getElementById("section").value;
   const msg = document.getElementById("uploadMsg");
 
-  if(!fileInput.files[0]){
-    return alert("Please select a file first");
-  }
-
-  if(!paperInput.value){
-    return alert("Please enter Paper ID");
-  }
+  if(!fileInput.files[0]) return alert("Select file");
+  if(!paperId) return alert("Enter Paper ID");
 
   let formData = new FormData();
   formData.append("file", fileInput.files[0]);
-
-  // 🔥 IMPORTANT: Paper ID from UI
-  formData.append("paperId", paperInput.value);
+  formData.append("paperId", paperId);
+  formData.append("section", section); // ✅ NEW
 
   msg.innerText = "Uploading...";
-  msg.style.color = "black";
 
   try {
     let res = await fetch("http://localhost:3000/admin/upload-json", {
@@ -388,22 +387,11 @@
     });
 
     let data = await res.json();
+    msg.innerText = data.message || "Upload success";
+    msg.style.color = "green";
 
-    if(res.ok){
-      msg.innerText = data.message || "Upload successful";
-      msg.style.color = "green";
-
-      // optional reset
-      fileInput.value = "";
-      paperInput.value = "";
-    } else {
-      msg.innerText = data.message || "Upload failed";
-      msg.style.color = "red";
-    }
-
-  } catch (e) {
-    console.error(e);
-    msg.innerText = "Server error while uploading.";
+  } catch (err) {
+    msg.innerText = "Upload failed";
     msg.style.color = "red";
   }
 }
@@ -475,6 +463,21 @@
       table.innerHTML = "<tr><td colspan='5'>Failed to load data.</td></tr>";
     }
   }
+
+  async function loadPaperFilter(){
+  let res = await fetch("http://localhost:3000/exam/papers");
+  let papers = await res.json();
+
+  let select = document.getElementById("paperFilter");
+
+  papers.forEach(p => {
+    let option = document.createElement("option");
+    option.value = p;
+    option.text = p;
+    select.appendChild(option);
+  });
+}
+
   async function loadPapers(){
   let res = await fetch("http://localhost:3000/exam/papers");
   let data = await res.json();
@@ -487,16 +490,48 @@
 }
 
 async function loadResultsByPaper(){
-  let paperId = document.getElementById("paperFilter").value;
+  const table = document.getElementById("resultTable");
+  table.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
 
-  let url = paperId 
-    ? `http://localhost:3000/admin/results/${paperId}`
-    : `http://localhost:3000/admin/results`;
+  try {
+    let paperId = document.getElementById("paperFilter").value;
 
-  let res = await fetch(url);
-  let data = await res.json();
+    let url = paperId 
+      ? `http://localhost:3000/admin/results/${paperId}`
+      : `http://localhost:3000/admin/results`;
 
-  // reuse same rendering logic
+    let res = await fetch(url);
+    let data = await res.json();
+
+    let html = "";
+
+    if(data.length === 0){
+      html = "<tr><td colspan='6'>No results found</td></tr>";
+    } else {
+      data.forEach(r => {
+        html += `
+        <tr>
+          <td>${r.name || "N/A"}</td>
+          <td>${r.email}</td>
+          <td>${r.college}</td>
+          <td>${r.paperId || "-"}</td>
+          <td>
+            <span style="background:#dcfce7;color:#166534;padding:4px 8px;border-radius:6px;font-weight:600">
+              ${r.score} / ${r.total}
+            </span>
+          </td>
+          <td>${new Date(r.date).toLocaleDateString()}</td>
+        </tr>
+        `;
+      });
+    }
+
+    table.innerHTML = html;
+
+  } catch (err) {
+    console.error(err);
+    table.innerHTML = "<tr><td colspan='6'>Failed to load data</td></tr>";
+  }
 }
   function logout(){
     localStorage.clear();

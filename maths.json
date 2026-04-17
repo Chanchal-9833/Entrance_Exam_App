@@ -1,0 +1,37 @@
+[
+  {
+    "question": "2 + 2 = ?",
+    "options": ["2", "3", "4", "5"],
+    "correctAnswer": "4",
+    "subject": "Quants",
+    "section": "B"
+  },
+  {
+    "question": "10 × 5 = ?",
+    "options": ["50", "40", "60", "45"],
+    "correctAnswer": "50",
+    "subject": "Quants",
+    "section": "B"
+  },
+  {
+    "question": "Square of 6 is?",
+    "options": ["12", "36", "18", "30"],
+    "correctAnswer": "36",
+    "subject": "Quants",
+    "section": "B"
+  },
+  {
+    "question": "15 ÷ 3 = ?",
+    "options": ["3", "4", "5", "6"],
+    "correctAnswer": "5",
+    "subject": "Quants",
+    "section": "B"
+  },
+  {
+    "question": "Percentage of 50 in 100?",
+    "options": ["25%", "50%", "75%", "100%"],
+    "correctAnswer": "50%",
+    "subject": "Quants",
+    "section": "B"
+  }
+]
